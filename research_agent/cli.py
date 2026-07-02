@@ -11,6 +11,8 @@ Designed for daily use with minimal setup:
 from __future__ import annotations
 
 import argparse
+import platform
+import subprocess
 import sys
 import webbrowser
 from typing import List, Optional
@@ -34,9 +36,20 @@ from . import ui
 def _open_preview() -> None:
     previews = sorted((ROOT / "preview").glob("*.html"))
     if previews:
-        webbrowser.open(previews[0].as_uri())
-        ui.success("Opened preview in browser")
-        ui.info(str(previews[0]))
+        path = previews[0]
+        try:
+            if platform.system() == "Darwin":
+                subprocess.run(["open", str(path)], check=False, 
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            elif platform.system() == "Windows":
+                subprocess.run(["start", str(path)], shell=True, check=False,
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            else:
+                webbrowser.open(path.as_uri())
+            ui.success("Opened preview in browser")
+        except Exception:
+            ui.info(f"Open this file in your browser: {path}")
+        ui.info(str(path))
     else:
         ui.warn("No preview generated.")
 
@@ -351,5 +364,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     return cmd_search(f"{cmd} {' '.join(rest)}".strip())
 
 
+def cli_entry() -> None:
+    """Console script entry for setuptools / pip / pipx."""
+    raise SystemExit(main())
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    cli_entry()
