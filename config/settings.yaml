@@ -1,0 +1,21 @@
+# Runtime settings for ResearchPulse. Safe to edit and commit (no secrets here).
+
+# How many papers to include per topic in each digest.
+papers_per_topic: 5
+
+# How many research-news items to include in the shared "What's happening" block.
+news_items: 5
+
+# Look back this many days when fetching new papers. 1 = strictly yesterday.
+# A small window (2-3) helps catch indexing lag on arXiv/OpenAlex.
+lookback_days: 2
+
+# Maximum abstract length (characters) used when no LLM summary is available.
+abstract_max_chars: 360
+
+# Polite delay (seconds) between arXiv API calls. arXiv asks for >= 3s.
+arxiv_request_delay: 3
+
+# Branding shown in the email.
+newsletter_name: "ResearchPulse"
+newsletter_tagline: "Your daily pulse on research."

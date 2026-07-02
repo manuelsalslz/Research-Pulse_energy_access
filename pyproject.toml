@@ -1,0 +1,89 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "research-pulse"
+version = "0.4.1"
+description = "Free open-source research agent: daily paper digests, multi-source search, and interactive CLI"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.7"
+authors = [
+    {name = "ResearchPulse Contributors"}
+]
+maintainers = [
+    {name = "ResearchPulse Contributors"}
+]
+keywords = [
+    "research",
+    "papers",
+    "arxiv",
+    "openalex",
+    "science",
+    "agent",
+    "newsletter",
+    "cli",
+    "literature",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing :: General",
+]
+dependencies = [
+    "requests>=2.31.0",
+    "feedparser>=6.0.11",
+    "PyYAML>=6.0.1",
+    "Jinja2>=3.1.3",
+    "python-dateutil>=2.9.0",
+    "rich>=13.0.0",
+]
+
+[project.optional-dependencies]
+web = [
+    "flask>=2.0.0",
+]
+dev = [
+    "build>=1.0.0",
+    "twine>=4.0.0",
+    "flask>=2.0.0",
+]
+all = [
+    "flask>=2.0.0",
+]
+
+[project.scripts]
+research-pulse = "research_agent.cli:main"
+rp = "research_agent.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/research-pulse/research-pulse"
+Documentation = "https://github.com/research-pulse/research-pulse#readme"
+Repository = "https://github.com/research-pulse/research-pulse"
+Issues = "https://github.com/research-pulse/research-pulse/issues"
+Changelog = "https://github.com/research-pulse/research-pulse/releases"
+
+[tool.setuptools.packages.find]
+include = ["research_agent*"]
+exclude = ["tests*", "preview*"]
+
+[tool.setuptools.package-data]
+research_agent = [
+    "bundled/config/*.yaml",
+    "bundled/config/*.csv",
+    "bundled/templates/*.j2",
+]

@@ -1,0 +1,277 @@
+# Topic catalog for ResearchPulse.
+#
+# Each topic is something a subscriber can choose on the signup page, or that a
+# local user can follow. The "id" is the value stored in the subscriber
+# database; everything else tells the fetchers where to look. To add a new
+# domain, append a new entry here (or use `research-pulse follow "<field>"`,
+# which appends one automatically) -- this is the ONLY file maintainers need to
+# edit to support more fields.
+#
+# Fields per topic:
+#   id              : stable slug stored against subscribers (lowercase, no spaces)
+#   label           : human-friendly name shown in emails / signup page
+#   keywords        : terms used for relevance ranking and filtering
+#   arxiv           : list of arXiv category codes (https://arxiv.org/category_taxonomy)
+#   biorxiv         : list of bioRxiv/medRxiv server names ("biorxiv"/"medrxiv") or []
+#   openalex        : free-text OpenAlex search query (optional)
+#   semanticscholar : free-text Semantic Scholar query -- covers ALL fields (optional)
+#   europepmc       : free-text Europe PMC query -- best for life sciences (optional)
+#
+# Topics WITHOUT arXiv categories (e.g. chemistry, medicine, economics, the
+# humanities) rely on openalex/semanticscholar/europepmc, so every research
+# domain is covered, not just computer science.
+
+topics:
+  # ── Computer science & AI ──────────────────────────────────────────────
+  - id: ai-ml
+    label: "Artificial Intelligence & Machine Learning"
+    keywords: ["machine learning", "deep learning", "neural network", "transformer", "LLM"]
+    arxiv: ["cs.AI", "cs.LG", "stat.ML"]
+    biorxiv: []
+    openalex: "artificial intelligence machine learning"
+    semanticscholar: "machine learning deep learning"
+
+  - id: nlp
+    label: "Natural Language Processing"
+    keywords: ["language model", "NLP", "text", "tokenization", "summarization"]
+    arxiv: ["cs.CL"]
+    biorxiv: []
+    openalex: "natural language processing"
+    semanticscholar: "natural language processing large language models"
+
+  - id: cv
+    label: "Computer Vision"
+    keywords: ["image", "vision", "segmentation", "detection", "diffusion"]
+    arxiv: ["cs.CV"]
+    biorxiv: []
+    openalex: "computer vision"
+    semanticscholar: "computer vision image recognition"
+
+  - id: robotics
+    label: "Robotics"
+    keywords: ["robot", "manipulation", "control", "navigation", "embodied"]
+    arxiv: ["cs.RO"]
+    biorxiv: []
+    openalex: "robotics"
+
+  - id: security
+    label: "Security & Cryptography"
+    keywords: ["security", "cryptography", "privacy", "attack", "vulnerability"]
+    arxiv: ["cs.CR"]
+    biorxiv: []
+    openalex: "computer security cryptography"
+
+  - id: systems
+    label: "Systems & Distributed Computing"
+    keywords: ["distributed", "operating system", "database", "scheduler", "consensus"]
+    arxiv: ["cs.DC", "cs.OS", "cs.DB"]
+    biorxiv: []
+    openalex: "distributed systems"
+
+  - id: hci
+    label: "Human-Computer Interaction"
+    keywords: ["user interface", "usability", "interaction", "user study", "UX"]
+    arxiv: ["cs.HC"]
+    biorxiv: []
+    openalex: "human computer interaction"
+
+  - id: theory
+    label: "Theoretical Computer Science"
+    keywords: ["algorithm", "complexity", "computational", "proof", "combinatorics"]
+    arxiv: ["cs.DS", "cs.CC", "cs.LO"]
+    biorxiv: []
+    openalex: "theoretical computer science algorithms"
+
+  - id: software-eng
+    label: "Software Engineering"
+    keywords: ["software engineering", "testing", "debugging", "compiler", "program analysis"]
+    arxiv: ["cs.SE", "cs.PL"]
+    biorxiv: []
+    openalex: "software engineering"
+
+  # ── Life sciences & medicine ───────────────────────────────────────────
+  - id: bioinformatics
+    label: "Bioinformatics & Computational Biology"
+    keywords: ["genomics", "protein", "sequencing", "rna", "bioinformatics"]
+    arxiv: ["q-bio.GN", "q-bio.QM"]
+    biorxiv: ["biorxiv"]
+    openalex: "bioinformatics computational biology"
+
+  - id: medicine
+    label: "Medicine & Health"
+    keywords: ["clinical", "disease", "patient", "diagnosis", "health"]
+    arxiv: []
+    biorxiv: ["medrxiv"]
+    openalex: "clinical medicine"
+    europepmc: "clinical medicine treatment"
+
+  - id: neuroscience
+    label: "Neuroscience"
+    keywords: ["brain", "neuron", "cortex", "cognition", "neural"]
+    arxiv: ["q-bio.NC"]
+    biorxiv: ["biorxiv"]
+    openalex: "neuroscience"
+    europepmc: "neuroscience brain"
+
+  - id: genetics
+    label: "Genetics & Genomics"
+    keywords: ["gene", "genome", "mutation", "expression", "variant"]
+    arxiv: []
+    biorxiv: ["biorxiv"]
+    openalex: "genetics genomics"
+    europepmc: "genetics genomics"
+
+  - id: immunology
+    label: "Immunology"
+    keywords: ["immune", "antibody", "vaccine", "t cell", "inflammation"]
+    arxiv: []
+    biorxiv: ["biorxiv"]
+    openalex: "immunology"
+    europepmc: "immunology immune response"
+
+  - id: cancer
+    label: "Cancer & Oncology"
+    keywords: ["cancer", "tumor", "oncology", "carcinoma", "metastasis"]
+    arxiv: []
+    biorxiv: ["biorxiv", "medrxiv"]
+    openalex: "cancer oncology"
+    europepmc: "cancer oncology tumor"
+
+  - id: public-health
+    label: "Public Health & Epidemiology"
+    keywords: ["epidemiology", "public health", "population", "outbreak", "surveillance"]
+    arxiv: []
+    biorxiv: ["medrxiv"]
+    openalex: "public health epidemiology"
+    europepmc: "public health epidemiology"
+
+  # ── Physical sciences & engineering ────────────────────────────────────
+  - id: physics
+    label: "Physics"
+    keywords: ["quantum", "particle", "condensed matter", "relativity"]
+    arxiv: ["physics.gen-ph", "quant-ph", "cond-mat.mes-hall"]
+    biorxiv: []
+    openalex: "physics"
+
+  - id: astronomy
+    label: "Astronomy & Astrophysics"
+    keywords: ["galaxy", "cosmology", "star", "exoplanet", "telescope"]
+    arxiv: ["astro-ph.GA", "astro-ph.CO", "astro-ph.EP"]
+    biorxiv: []
+    openalex: "astronomy astrophysics"
+
+  - id: chemistry
+    label: "Chemistry"
+    keywords: ["synthesis", "catalysis", "molecule", "reaction", "compound"]
+    arxiv: ["physics.chem-ph"]
+    biorxiv: []
+    openalex: "chemistry"
+    semanticscholar: "chemistry synthesis catalysis"
+
+  - id: materials
+    label: "Materials Science"
+    keywords: ["material", "nanomaterial", "polymer", "semiconductor", "crystal"]
+    arxiv: ["cond-mat.mtrl-sci"]
+    biorxiv: []
+    openalex: "materials science"
+
+  - id: energy
+    label: "Energy & Sustainability"
+    keywords: ["renewable", "solar", "battery", "energy", "sustainability"]
+    arxiv: ["physics.app-ph"]
+    biorxiv: []
+    openalex: "renewable energy sustainability"
+    semanticscholar: "renewable energy battery storage"
+
+  - id: climate
+    label: "Climate & Earth Science"
+    keywords: ["climate", "atmosphere", "ocean", "carbon", "warming"]
+    arxiv: ["physics.ao-ph"]
+    biorxiv: []
+    openalex: "climate science earth"
+    semanticscholar: "climate change earth science"
+
+  - id: engineering
+    label: "Engineering (General)"
+    keywords: ["design", "manufacturing", "mechanical", "structural", "control system"]
+    arxiv: ["eess.SY"]
+    biorxiv: []
+    openalex: "engineering"
+    semanticscholar: "engineering design systems"
+
+  - id: math
+    label: "Mathematics"
+    keywords: ["theorem", "topology", "algebra", "geometry", "analysis"]
+    arxiv: ["math.AG", "math.NT", "math.PR", "math.CO"]
+    biorxiv: []
+    openalex: "mathematics"
+
+  - id: statistics
+    label: "Statistics"
+    keywords: ["statistics", "inference", "bayesian", "regression", "probability"]
+    arxiv: ["stat.ME", "stat.TH", "stat.AP"]
+    biorxiv: []
+    openalex: "statistics"
+
+  # ── Social sciences & humanities ───────────────────────────────────────
+  - id: economics
+    label: "Economics & Finance"
+    keywords: ["economics", "market", "finance", "policy", "trade"]
+    arxiv: ["econ.EM", "econ.GN", "q-fin.GN"]
+    biorxiv: []
+    openalex: "economics"
+    semanticscholar: "economics finance markets"
+
+  - id: psychology
+    label: "Psychology & Cognitive Science"
+    keywords: ["behavior", "cognition", "psychology", "perception", "memory"]
+    arxiv: []
+    biorxiv: []
+    openalex: "psychology cognitive science"
+    semanticscholar: "psychology cognitive behavior"
+
+  - id: social-science
+    label: "Social & Political Science"
+    keywords: ["society", "politics", "policy", "social", "governance"]
+    arxiv: ["cs.CY"]
+    biorxiv: []
+    openalex: "social science political science"
+    semanticscholar: "sociology political science"
+
+  - id: education
+    label: "Education & Learning Sciences"
+    keywords: ["education", "learning", "teaching", "pedagogy", "curriculum"]
+    arxiv: []
+    biorxiv: []
+    openalex: "education learning sciences"
+    semanticscholar: "education pedagogy learning"
+
+  - id: environment
+    label: "Environmental & Ecological Science"
+    keywords: ["ecology", "biodiversity", "conservation", "ecosystem", "species"]
+    arxiv: []
+    biorxiv: ["biorxiv"]
+    openalex: "ecology environmental science"
+    semanticscholar: "ecology biodiversity conservation"
+
+  - id: agriculture
+    label: "Agriculture & Food Science"
+    keywords: ["crop", "agriculture", "soil", "food", "yield"]
+    arxiv: []
+    biorxiv: ["biorxiv"]
+    openalex: "agriculture food science"
+    europepmc: "agriculture crop science"
+
+# Research-industry / community news. Pulled via RSS and shown in a shared
+# "What's happening in research" section for every subscriber.
+news_feeds:
+  - name: "Hacker News (front page)"
+    url: "https://hnrss.org/frontpage"
+  - name: "MIT News - Research"
+    url: "https://news.mit.edu/rss/research"
+  - name: "Nature - Latest"
+    url: "https://www.nature.com/nature.rss"
+  - name: "Science Daily - Top"
+    url: "https://www.sciencedaily.com/rss/top/science.xml"
+  - name: "Phys.org - Latest"
+    url: "https://phys.org/rss-feed/"

@@ -1,0 +1,4 @@
+email,topics,confirmed,token
+researcher@example.com,"ai-ml;nlp",true,sample-token-001
+biologist@example.com,"bioinformatics;medicine",true,sample-token-002
+pending@example.com,"cv",false,sample-token-003

@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResearchPulse Agent</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #38bdf8;
+            --accent-hover: #7dd3fc;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --error: #f87171;
+            --border: #475569;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent), #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            display: inline-block;
+        }
+
+        .status-dot.offline {
+            background: var(--error);
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-section h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        /* Topics List */
+        .topics-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .topic-chip {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 4px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .topic-chip:hover {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-color: var(--accent);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .quick-action {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            color: var(--text-primary);
+        }
+
+        .quick-action:hover {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-color: var(--accent);
+        }
+
+        .quick-action .icon {
+            margin-right: 8px;
+        }
+
+        /* Memory Section */
+        .memory-info {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .memory-info .stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+
+        .memory-info .stat-value {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .message-assistant {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message-user .message-bubble {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-assistant .message-bubble {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-content {
+            white-space: pre-wrap;
+        }
+
+        .message-content h3 {
+            font-size: 15px;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+
+        .message-content .paper-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            margin: 8px 0;
+        }
+
+        .message-content .paper-card .paper-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .message-content .paper-card .paper-number {
+            background: var(--accent);
+            color: var(--bg-primary);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .message-content .paper-card .paper-source {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .message-content .paper-card .paper-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .message-content .paper-card .paper-title a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .message-content .paper-card .paper-title a:hover {
+            text-decoration: underline;
+        }
+
+        .message-content .paper-card .paper-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .message-content .paper-card .paper-abstract {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .message-content .paper-card .paper-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .message-content .paper-card .btn-small {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 11px;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+
+        .message-content .paper-card .btn-small:hover {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-color: var(--accent);
+        }
+
+        .message-content .score-badge {
+            background: var(--success);
+            color: var(--bg-primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .message-content .citations {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .message-content .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .message-content .results-header h3 {
+            margin-bottom: 0;
+        }
+
+        .message-content .results-header .count {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .message-content .papers-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message-content .no-results {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Input Area */
+        .input-area {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 15px 20px;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .command-input {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .command-input:focus {
+            border-color: var(--accent);
+        }
+
+        .command-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .send-btn {
+            background: var(--accent);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--bg-primary);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Suggestions */
+        .suggestions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .suggestion {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+        }
+
+        .suggestion:hover {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-color: var(--accent);
+        }
+
+        /* Loading Indicator */
+        .loading {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .loading-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Rating Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .star {
+            font-size: 32px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--border);
+        }
+
+        .star:hover,
+        .star.active {
+            color: var(--warning);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-btn-primary {
+            background: var(--accent);
+            border: none;
+            color: var(--bg-primary);
+        }
+
+        .modal-btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        /* Profile Modal */
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .form-group input {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .message-bubble {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <span class="logo-icon">🔬</span>
+            <span class="logo-text">ResearchPulse Agent</span>
+            <span style="font-size: 12px; color: var(--text-muted); margin-left: 8px;">v{{ version }}</span>
+        </div>
+        <div class="header-status">
+            <span id="llmStatus">
+                <span class="status-dot" id="llmDot"></span>
+                <span id="llmText">Checking LLM...</span>
+            </span>
+            <span id="papersCount">0 papers loaded</span>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <h3>Research Topics</h3>
+                <div class="topics-list" id="topicsList">
+                    <!-- Topics loaded dynamically -->
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Quick Actions</h3>
+                <div class="quick-actions">
+                    <button class="quick-action" onclick="showProfile()">
+                        <span class="icon">👤</span> Edit Profile
+                    </button>
+                    <button class="quick-action" onclick="showMemory()">
+                        <span class="icon">🧠</span> View Memory
+                    </button>
+                    <button class="quick-action" onclick="getInsights()">
+                        <span class="icon">💡</span> Get Insights
+                    </button>
+                    <button class="quick-action" onclick="getRecommendations()">
+                        <span class="icon">⭐</span> Recommendations
+                    </button>
+                    <button class="quick-action" onclick="getBriefing()">
+                        <span class="icon">📰</span> Daily Briefing
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Research Memory</h3>
+                <div class="memory-info" id="memoryInfo">
+                    <div class="stat">
+                        <span>Papers read</span>
+                        <span class="stat-value" id="memoryPapers">0</span>
+                    </div>
+                    <div class="stat">
+                        <span>Insights</span>
+                        <span class="stat-value" id="memoryInsights">0</span>
+                    </div>
+                    <div class="stat">
+                        <span>Conversations</span>
+                        <span class="stat-value" id="memoryConversations">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div class="chat-messages" id="chatMessages">
+                <!-- Welcome Message -->
+                <div class="message message-assistant">
+                    <div class="message-bubble">
+                        <div class="message-content">
+                            <h3>Welcome to ResearchPulse Agent! 🔬</h3>
+                            <p>I'm your AI research assistant. I can help you:</p>
+                            <ul style="margin: 10px 0; padding-left: 20px;">
+                                <li>Search for research papers</li>
+                                <li>Summarize and compare papers</li>
+                                <li>Challenge your hypotheses</li>
+                                <li>Find research gaps and trends</li>
+                                <li>Get personalized recommendations</li>
+                            </ul>
+                            <p>Try typing a search query or use the quick actions on the left!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div class="loading" id="loadingIndicator">
+                <div class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span>Thinking...</span>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <input type="text" class="command-input" id="commandInput"
+                               placeholder="Search papers, ask questions, or type a command..."
+                               autocomplete="off">
+                    </div>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
+                </div>
+                <div class="suggestions" id="suggestions">
+                    <span class="suggestion" onclick="useSuggestion('search transformer attention')">transformer attention</span>
+                    <span class="suggestion" onclick="useSuggestion('search large language models')">large language models</span>
+                    <span class="suggestion" onclick="useSuggestion('search reinforcement learning')">reinforcement learning</span>
+                    <span class="suggestion" onclick="useSuggestion('topic ai-ml')">AI & ML topic</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div class="modal" id="ratingModal">
+        <div class="modal-content">
+            <div class="modal-header">Rate Paper</div>
+            <p id="ratingPaperTitle" style="margin-bottom: 16px; color: var(--text-secondary);"></p>
+            <div class="rating-stars" id="ratingStars">
+                <span class="star" data-rating="1" onclick="setRating(1)">★</span>
+                <span class="star" data-rating="2" onclick="setRating(2)">★</span>
+                <span class="star" data-rating="3" onclick="setRating(3)">★</span>
+                <span class="star" data-rating="4" onclick="setRating(4)">★</span>
+                <span class="star" data-rating="5" onclick="setRating(5)">★</span>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('ratingModal')">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="submitRating()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">Research Profile</div>
+            <div class="profile-form">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="profileName" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label>Research Field</label>
+                    <input type="text" id="profileField" placeholder="e.g., Machine Learning, NLP">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <input type="text" id="profileRole" placeholder="e.g., PhD Student, Researcher">
+                </div>
+            </div>
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('profileModal')">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="saveProfile()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Memory Modal -->
+    <div class="modal" id="memoryModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">Research Memory</div>
+            <div id="memoryContent" style="max-height: 400px; overflow-y: auto;">
+                <!-- Memory content loaded dynamically -->
+            </div>
+            <div class="modal-actions" style="margin-top: 16px;">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('memoryModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let lastPapers = [];
+        let currentRatingPaper = null;
+        let currentRating = 0;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTopics();
+            loadStatus();
+            loadMemory();
+
+            // Enter key to send
+            document.getElementById('commandInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+
+        // API Helper
+        async function apiCall(endpoint, method = 'GET', data = null) {
+            const options = {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+            };
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            const response = await fetch(endpoint, options);
+            return response.json();
+        }
+
+        // Load Topics
+        async function loadTopics() {
+            const data = await apiCall('/api/topics');
+            const container = document.getElementById('topicsList');
+            container.innerHTML = data.topics.map(t =>
+                `<span class="topic-chip" onclick="searchTopic('${t.id}')">${t.label}</span>`
+            ).join('');
+        }
+
+        // Load Status
+        async function loadStatus() {
+            const data = await apiCall('/api/status');
+            const dot = document.getElementById('llmDot');
+            const text = document.getElementById('llmText');
+            const count = document.getElementById('papersCount');
+
+            if (data.llm_available) {
+                dot.classList.remove('offline');
+                text.textContent = `LLM: ${data.llm_backend}`;
+            } else {
+                dot.classList.add('offline');
+                text.textContent = 'LLM not configured';
+            }
+            count.textContent = `${data.papers_count} papers loaded`;
+        }
+
+        // Load Memory
+        async function loadMemory() {
+            const data = await apiCall('/api/memory');
+            document.getElementById('memoryPapers').textContent = data.papers_count;
+            document.getElementById('memoryInsights').textContent = data.insights_count;
+            document.getElementById('memoryConversations').textContent = data.conversations_count;
+        }
+
+        // Send Message
+        async function sendMessage() {
+            const input = document.getElementById('commandInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add user message to chat
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Parse command
+            const parts = message.split(/\s+/);
+            const command = parts[0].toLowerCase();
+            const args = parts.slice(1).join(' ');
+
+            // Show loading
+            showLoading(true);
+
+            try {
+                // Route command
+                if (command === 'search' || !['search', 'topic', 'topics', 'summarize', 'rate',
+                    'compare', 'ask', 'explain', 'critique', 'insights', 'recommend',
+                    'briefing', 'memory', 'profile', 'help'].includes(command)) {
+                    await handleSearch(message.startsWith('search ') ? args : message);
+                } else if (command === 'topic') {
+                    await handleTopic(args);
+                } else if (command === 'topics') {
+                    await handleTopics();
+                } else if (command === 'summarize') {
+                    await handleSummarize(parseInt(args));
+                } else if (command === 'rate') {
+                    handleRate(parseInt(args));
+                } else if (command === 'compare') {
+                    await handleCompare(args.split(/\s+/).map(Number));
+                } else if (command === 'ask') {
+                    await handleAsk(args);
+                } else if (command === 'explain') {
+                    await handleExplain(args);
+                } else if (command === 'critique') {
+                    await handleCritique(args);
+                } else if (command === 'insights') {
+                    await getInsights();
+                } else if (command === 'recommend') {
+                    await getRecommendations();
+                } else if (command === 'briefing') {
+                    await getBriefing();
+                } else if (command === 'memory') {
+                    showMemory();
+                } else if (command === 'profile') {
+                    showProfile();
+                } else if (command === 'help') {
+                    showHelp();
+                } else {
+                    addMessage(`Unknown command: ${command}. Type 'help' for available commands.`, 'assistant');
+                }
+            } catch (error) {
+                addMessage(`Error: ${error.message}`, 'assistant');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Command Handlers
+        async function handleSearch(query) {
+            const data = await apiCall('/api/search', 'POST', { query });
+            if (data.error) {
+                addMessage(`Error: ${data.error}`, 'assistant');
+                return;
+            }
+            lastPapers = data.papers || [];
+            addMessage(data.html, 'assistant', true);
+            loadMemory();
+        }
+
+        async function handleTopic(topicId) {
+            const data = await apiCall('/api/topic', 'POST', { topic: topicId });
+            if (data.error) {
+                addMessage(`Error: ${data.error}`, 'assistant');
+                return;
+            }
+            lastPapers = data.papers || [];
+            addMessage(data.html, 'assistant', true);
+        }
+
+        async function handleTopics() {
+            const data = await apiCall('/api/topics');
+            let html = '<h3>Available Topics</h3><div class="papers-list">';
+            data.topics.forEach(t => {
+                html += `<div class="paper-card">
+                    <div class="paper-title">${t.label}</div>
+                    <div class="paper-meta">ID: ${t.id} | Keywords: ${t.keywords.join(', ')}</div>
+                </div>`;
+            });
+            html += '</div>';
+            addMessage(html, 'assistant', true);
+        }
+
+        async function handleSummarize(index) {
+            if (!index || index < 1 || index > lastPapers.length) {
+                addMessage('Usage: summarize <number> (e.g., summarize 1)', 'assistant');
+                return;
+            }
+            const data = await apiCall('/api/summarize', 'POST', { index });
+            if (data.error) {
+                addMessage(`Error: ${data.error}`, 'assistant');
+                return;
+            }
+            addMessage(`**Summary of "${data.title}"**\n\n${data.summary}`, 'assistant');
+        }
+
+        function handleRate(index) {
+            if (!index || index < 1 || index > lastPapers.length) {
+                addMessage('Usage: rate <number> (e.g., rate 1)', 'assistant');
+                return;
+            }
+            currentRatingPaper = index;
+            currentRating = 0;
+            document.getElementById('ratingPaperTitle').textContent = lastPapers[index - 1].title;
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+            document.getElementById('ratingModal').classList.add('active');
+        }
+
+        async function handleCompare(indices) {
+            if (indices.length < 2) {
+                addMessage('Usage: compare <n1> <n2> [n3...] (e.g., compare 1 2 3)', 'assistant');
+                return;
+            }
+            const data = await apiCall('/api/compare', 'POST', { indices });
+            if (data.error) {
+                addMessage(`Error: ${data.error}`, 'assistant');
+                return;
+            }
+            addMessage(data.comparison, 'assistant');
+        }
+
+        async function handleAsk(question) {
+            const data = await apiCall('/api/ask', 'POST', { question });
+            if (data.error) {
+                addMessage(`Error: ${data.error}`, 'assistant');
+                return;
+            }
+            addMessage(data.answer, 'assistant');
+        }
+
+        async function handleExplain(concept) {
+            const data = await apiCall('/api/explain', 'POST', { concept });
+            if (data.error) {
+                addMessage(`Error: ${data.error}`, 'assistant');
+                return;
+            }
+            addMessage(`**Explanation of "${data.concept}"**\n\n${data.explanation}`, 'assistant');
+        }
+
+        async function handleCritique(hypothesis) {
+            const data = await apiCall('/api/critique', 'POST', { hypothesis });
+            if (data.error) {
+                addMessage(`Error: ${data.error}`, 'assistant');
+                return;
+            }
+            addMessage(data.critique, 'assistant');
+        }
+
+        // Quick Actions
+        async function getInsights() {
+            showLoading(true);
+            try {
+                const data = await apiCall('/api/insights', 'POST');
+                if (data.error) {
+                    addMessage(`Error: ${data.error}`, 'assistant');
+                    return;
+                }
+                addMessage(data.insights, 'assistant');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function getRecommendations() {
+            showLoading(true);
+            try {
+                const data = await apiCall('/api/recommend', 'POST');
+                if (data.error) {
+                    addMessage(`Error: ${data.error}`, 'assistant');
+                    return;
+                }
+                addMessage(data.recommendations, 'assistant');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function getBriefing() {
+            showLoading(true);
+            try {
+                const data = await apiCall('/api/briefing', 'POST');
+                if (data.error) {
+                    addMessage(`Error: ${data.error}`, 'assistant');
+                    return;
+                }
+                addMessage(data.briefing, 'assistant');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function showProfile() {
+            apiCall('/api/memory').then(data => {
+                document.getElementById('profileName').value = data.profile.name || '';
+                document.getElementById('profileField').value = data.profile.field || '';
+                document.getElementById('profileRole').value = data.profile.role || '';
+                document.getElementById('profileModal').classList.add('active');
+            });
+        }
+
+        async function saveProfile() {
+            const name = document.getElementById('profileName').value;
+            const field = document.getElementById('profileField').value;
+            const role = document.getElementById('profileRole').value;
+
+            if (name) await apiCall('/api/memory/set', 'POST', { key: 'name', value: name });
+            if (field) await apiCall('/api/memory/set', 'POST', { key: 'field', value: field });
+            if (role) await apiCall('/api/memory/set', 'POST', { key: 'role', value: role });
+
+            closeModal('profileModal');
+            addMessage('Profile updated!', 'assistant');
+            loadMemory();
+        }
+
+        function showMemory() {
+            apiCall('/api/memory').then(data => {
+                let html = '<div style="font-size: 14px;">';
+                html += `<p><strong>Name:</strong> ${data.profile.name || 'Not set'}</p>`;
+                html += `<p><strong>Field:</strong> ${data.profile.field || 'Not set'}</p>`;
+                html += `<p><strong>Role:</strong> ${data.profile.role || 'Not set'}</p>`;
+                html += `<p><strong>Topics:</strong> ${data.interests.topics.join(', ') || 'None'}</p>`;
+                html += `<p><strong>Keywords:</strong> ${data.interests.keywords.join(', ') || 'None'}</p>`;
+                html += `<p><strong>Questions:</strong> ${data.interests.questions.join(', ') || 'None'}</p>`;
+                html += `<p><strong>Papers read:</strong> ${data.papers_count}</p>`;
+                html += `<p><strong>Insights:</strong> ${data.insights_count}</p>`;
+                html += `<p><strong>Conversations:</strong> ${data.conversations_count}</p>`;
+                html += '</div>';
+                document.getElementById('memoryContent').innerHTML = html;
+                document.getElementById('memoryModal').classList.add('active');
+            });
+        }
+
+        function showHelp() {
+            const help = `
+<h3>ResearchPulse Agent Commands</h3>
+
+<p><strong>Search Commands:</strong></p>
+<ul>
+    <li><code>search &lt;query&gt;</code> - Search papers by keyword</li>
+    <li><code>topic &lt;topic_id&gt;</code> - Search papers in a specific topic</li>
+    <li><code>topics</code> - List available research topics</li>
+</ul>
+
+<p><strong>Paper Commands:</strong></p>
+<ul>
+    <li><code>summarize &lt;number&gt;</code> - Summarize a paper</li>
+    <li><code>rate &lt;number&gt;</code> - Rate a paper</li>
+    <li><code>compare &lt;n1&gt; &lt;n2&gt;</code> - Compare papers</li>
+    <li><code>ask &lt;question&gt;</code> - Ask a research question</li>
+    <li><code>explain &lt;concept&gt;</code> - Explain a concept</li>
+    <li><code>critique &lt;hypothesis&gt;</code> - Challenge a hypothesis</li>
+</ul>
+
+<p><strong>Insight Commands:</strong></p>
+<ul>
+    <li><code>insights</code> - Get insights from papers</li>
+    <li><code>recommend</code> - Get recommendations</li>
+    <li><code>briefing</code> - Get daily briefing</li>
+</ul>
+            `;
+            addMessage(help, 'assistant', true);
+        }
+
+        // UI Helpers
+        function addMessage(content, sender, isHtml = false) {
+            const container = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message message-${sender}`;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+
+            if (isHtml) {
+                contentDiv.innerHTML = content;
+            } else {
+                contentDiv.textContent = content;
+            }
+
+            bubble.appendChild(contentDiv);
+            messageDiv.appendChild(bubble);
+            container.appendChild(messageDiv);
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showLoading(show) {
+            const indicator = document.getElementById('loadingIndicator');
+            const btn = document.getElementById('sendBtn');
+            if (show) {
+                indicator.classList.add('active');
+                btn.disabled = true;
+            } else {
+                indicator.classList.remove('active');
+                btn.disabled = false;
+            }
+        }
+
+        function useSuggestion(text) {
+            document.getElementById('commandInput').value = text;
+            sendMessage();
+        }
+
+        function searchTopic(topicId) {
+            document.getElementById('commandInput').value = `topic ${topicId}`;
+            sendMessage();
+        }
+
+        function summarizePaper(index) {
+            document.getElementById('commandInput').value = `summarize ${index}`;
+            sendMessage();
+        }
+
+        function ratePaper(index) {
+            handleRate(index);
+        }
+
+        function askAboutPaper(index) {
+            const question = prompt('What would you like to know about this paper?');
+            if (question) {
+                document.getElementById('commandInput').value = `ask ${index} ${question}`;
+                sendMessage();
+            }
+        }
+
+        function setRating(rating) {
+            currentRating = rating;
+            document.querySelectorAll('.star').forEach(s => {
+                s.classList.toggle('active', parseInt(s.dataset.rating) <= rating);
+            });
+        }
+
+        async function submitRating() {
+            if (!currentRating || !currentRatingPaper) return;
+
+            const data = await apiCall('/api/rate', 'POST', {
+                index: currentRatingPaper,
+                rating: currentRating
+            });
+
+            if (data.error) {
+                addMessage(`Error: ${data.error}`, 'assistant');
+            } else {
+                addMessage(data.message, 'assistant');
+            }
+
+            closeModal('ratingModal');
+            loadMemory();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modals on outside click
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
