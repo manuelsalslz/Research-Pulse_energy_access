@@ -7,9 +7,10 @@ delay between calls.
 
 from __future__ import annotations
 
+import re
 import time
 from datetime import datetime, timedelta, timezone
-from typing import List
+from typing import List, Optional, Tuple
 
 import feedparser
 
@@ -17,6 +18,41 @@ from ..models import Paper
 from .http import get
 
 API_URL = "http://export.arxiv.org/api/query"
+
+
+def _venue_from_arxiv_text(text: str) -> Tuple[str, Optional[int]]:
+    """Best-effort venue/year from arXiv journal-ref or comments."""
+    if not text:
+        return "", None
+    year_match = re.search(r"\b(20\d{2})\b", text)
+    year = int(year_match.group(1)) if year_match else None
+    cleaned = re.sub(r"(?i)\b(accepted at|to appear in|presented at|published in)\b", "", text)
+    cleaned = re.sub(r"\b(20\d{2})\b", "", cleaned).strip(" ,.;")
+    return cleaned.strip(), year
+
+
+def _paper_from_entry(entry) -> Paper:
+    published = None
+    if getattr(entry, "published_parsed", None):
+        published = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
+
+    journal_ref = getattr(entry, "arxiv_journal_ref", "") or ""
+    comment = getattr(entry, "arxiv_comment", "") or ""
+    venue, vyear = _venue_from_arxiv_text(journal_ref or comment)
+    year = vyear or (published.year if published else None)
+
+    return Paper(
+        id=entry.get("id", entry.get("link", "")),
+        title=" ".join(entry.get("title", "").split()),
+        abstract=" ".join(entry.get("summary", "").split()),
+        authors=[a.get("name", "") for a in entry.get("authors", [])],
+        url=entry.get("link", ""),
+        source="arXiv",
+        published=published,
+        categories=[t.get("term", "") for t in entry.get("tags", [])],
+        venue=venue,
+        year=year,
+    )
 
 
 def _date_window(lookback_days: int) -> str:
@@ -53,19 +89,5 @@ def fetch(categories: List[str], lookback_days: int = 2, max_results: int = 50,
     feed = feedparser.parse(resp.content)
     papers: List[Paper] = []
     for entry in feed.entries:
-        published = None
-        if getattr(entry, "published_parsed", None):
-            published = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
-        papers.append(
-            Paper(
-                id=entry.get("id", entry.get("link", "")),
-                title=" ".join(entry.get("title", "").split()),
-                abstract=" ".join(entry.get("summary", "").split()),
-                authors=[a.get("name", "") for a in entry.get("authors", [])],
-                url=entry.get("link", ""),
-                source="arXiv",
-                published=published,
-                categories=[t.get("term", "") for t in entry.get("tags", [])],
-            )
-        )
+        papers.append(_paper_from_entry(entry))
     return papers

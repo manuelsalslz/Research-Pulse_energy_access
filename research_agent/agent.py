@@ -57,6 +57,8 @@ def _display_paper_plain(paper: Paper, index: int = 0) -> None:
         if len(paper.authors) > 3:
             authors += " et al."
         print(f"   Authors: {authors}")
+    if paper.venue_line():
+        print(f"   Venue: {paper.venue_line()}")
     if paper.score:
         print(f"   Relevance: {paper.score:.2f}")
     if paper.citations:
@@ -92,18 +94,17 @@ def _display_paper_rich(console: 'Console', paper: Paper, index: int = 0) -> Non
     prefix = f"[bold cyan]{index}.[/bold cyan]" if index else "[bold cyan]-[/bold cyan]"
 
     console.print(f"\n{prefix} [bold]{paper.title}[/bold]")
-    console.print(f"   [dim]{paper.source}[/dim]", end="")
-
+    meta = f"   [dim]{paper.source}[/dim]"
     if paper.authors:
         authors = ", ".join(paper.authors[:3])
         if len(paper.authors) > 3:
             authors += " et al."
-        console.print(f" [dim]· {authors}[/dim]", end="")
-
+        meta += f" [dim]· {authors}[/dim]"
     if paper.citations:
-        console.print(f" [dim]· {paper.citations} citations[/dim]", end="")
-
-    console.print()  # Newline
+        meta += f" [dim]· {paper.citations} citations[/dim]"
+    console.print(meta)
+    if paper.venue_line():
+        console.print(f"   [magenta]{paper.venue_line()}[/magenta]")
 
     if paper.score:
         console.print(f"   [green]Relevance: {paper.score:.2f}[/green]")

@@ -31,7 +31,7 @@ def _reconstruct_abstract(inverted_index: Optional[dict]) -> str:
 
 
 def fetch(query: str, lookback_days: int = 2, max_results: int = 25,
-          mailto: str = "") -> List[Paper]:
+          mailto: str = "", venue: Optional[str] = None) -> List[Paper]:
     """Fetch recent works matching a free-text query."""
     if not query:
         return []
@@ -39,9 +39,13 @@ def fetch(query: str, lookback_days: int = 2, max_results: int = 25,
     now = datetime.now(timezone.utc)
     start = now - timedelta(days=max(lookback_days, 1))
 
+    filters = [f"from_publication_date:{start:%Y-%m-%d}"]
+    if venue:
+        filters.append(f"primary_location.source.display_name.search:{venue}")
+
     params = {
         "search": query,
-        "filter": f"from_publication_date:{start:%Y-%m-%d}",
+        "filter": ",".join(filters),
         "sort": "publication_date:desc",
         "per-page": min(max_results, 50),
     }
@@ -72,6 +76,10 @@ def fetch(query: str, lookback_days: int = 2, max_results: int = 25,
             for a in w.get("authorships", [])
         ]
         url = w.get("doi") or w.get("id", "")
+        loc = w.get("primary_location") or {}
+        source = loc.get("source") or {}
+        venue = source.get("display_name") or ""
+        year = w.get("publication_year")
         papers.append(
             Paper(
                 id=w.get("id", url),
@@ -82,6 +90,8 @@ def fetch(query: str, lookback_days: int = 2, max_results: int = 25,
                 source="OpenAlex",
                 published=pub,
                 citations=int(w.get("cited_by_count", 0) or 0),
+                venue=venue,
+                year=int(year) if year else (pub.year if pub else None),
             )
         )
     return papers

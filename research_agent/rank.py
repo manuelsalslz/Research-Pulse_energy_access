@@ -13,6 +13,7 @@ from typing import List
 
 from .config import Topic
 from .models import Paper
+from .venues import CORE_ORDER, enrich_paper, lookup_core
 
 
 def _keyword_score(paper: Paper, keywords: List[str]) -> float:
@@ -45,11 +46,18 @@ def _citation_score(paper: Paper) -> float:
     return min(1.0, math.log10(paper.citations + 1) / 2.0)
 
 
+def _core_score(paper: Paper) -> float:
+    rank = paper.core_rank or lookup_core(paper.venue)
+    return CORE_ORDER.get(rank, 0) / 4.0
+
+
 def score_paper(paper: Paper, topic: Topic) -> float:
+    enrich_paper(paper)
     return (
-        0.55 * _keyword_score(paper, topic.keywords)
-        + 0.30 * _recency_score(paper)
+        0.50 * _keyword_score(paper, topic.keywords)
+        + 0.25 * _recency_score(paper)
         + 0.15 * _citation_score(paper)
+        + 0.10 * _core_score(paper)
     )
 
 

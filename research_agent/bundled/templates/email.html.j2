@@ -24,7 +24,7 @@
       <div style="padding:14px 0;border-bottom:1px solid #f1f5f9;">
         <a href="{{ paper.url }}" style="font-size:16px;font-weight:600;color:#0369a1;text-decoration:none;">{{ paper.title }}</a>
         <div style="font-size:12px;color:#94a3b8;margin:4px 0 8px;">
-          {{ paper.source }}{% if paper.author_line() %} &middot; {{ paper.author_line() }}{% endif %}{% if paper.citations %} &middot; {{ paper.citations }} citations{% endif %}
+          {{ paper.source }}{% if paper.venue_line() %} &middot; {{ paper.venue_line() }}{% endif %}{% if paper.author_line() %} &middot; {{ paper.author_line() }}{% endif %}{% if paper.citations %} &middot; {{ paper.citations }} citations{% endif %}
         </div>
         <div style="font-size:14px;color:#334155;line-height:1.5;">{{ paper.summary }}</div>
       </div>

@@ -66,7 +66,7 @@ def _extract_date(published: dict) -> Optional[datetime]:
 
 
 def fetch(query: str, lookback_days: int = 30, max_results: int = 25,
-          mailto: str = "") -> List[Paper]:
+          mailto: str = "", venue: Optional[str] = None) -> List[Paper]:
     """Fetch recent papers from Crossref matching a free-text query.
 
     Args:
@@ -84,11 +84,13 @@ def fetch(query: str, lookback_days: int = 30, max_results: int = 25,
     now = datetime.now(timezone.utc)
     start = now - timedelta(days=max(lookback_days, 1))
 
-    # Build filter for date range and article type
+    # Build filter for date range and article types (journals + conferences)
     filters = [
         f"from-pub-date:{start:%Y-%m-%d}",
-        "type:journal-article",
+        "type:journal-article,type:proceedings-article",
     ]
+    if venue:
+        filters.append(f"container-title:{venue}")
 
     params = {
         "query": query,
@@ -133,7 +135,8 @@ def fetch(query: str, lookback_days: int = 30, max_results: int = 25,
         published = _extract_date(item.get("published", {}))
 
         journal_list = item.get("container-title", [])
-        journal = journal_list[0] if journal_list else "Unknown"
+        journal = journal_list[0] if journal_list else ""
+        year = published.year if published else None
 
         tags = item.get("subject", [])
         citations = item.get("is-referenced-by-count", 0) or 0
@@ -150,6 +153,8 @@ def fetch(query: str, lookback_days: int = 30, max_results: int = 25,
             published=published,
             categories=tags[:5],  # Limit tags
             citations=citations,
+            venue=journal,
+            year=year,
         ))
 
     return papers
@@ -191,7 +196,8 @@ def fetch_by_doi(doi: str) -> Optional[Paper]:
     published = _extract_date(item.get("published", {}))
 
     journal_list = item.get("container-title", [])
-    journal = journal_list[0] if journal_list else "Unknown"
+    journal = journal_list[0] if journal_list else ""
+    year = published.year if published else None
 
     tags = item.get("subject", [])
     citations = item.get("is-referenced-by-count", 0) or 0
@@ -206,4 +212,6 @@ def fetch_by_doi(doi: str) -> Optional[Paper]:
         published=published,
         categories=tags[:5],
         citations=citations,
+        venue=journal,
+        year=year,
     )

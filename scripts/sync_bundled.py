@@ -17,7 +17,7 @@ def main() -> None:
     cfg_dst.mkdir(parents=True, exist_ok=True)
     tpl_dst.mkdir(parents=True, exist_ok=True)
 
-    for name in ("topics.yaml", "settings.yaml", "subscribers.sample.csv"):
+    for name in ("topics.yaml", "settings.yaml", "subscribers.sample.csv", "core_venues.yaml"):
         shutil.copy2(cfg_src / name, cfg_dst / name)
         print(f"  synced config/{name}")
 

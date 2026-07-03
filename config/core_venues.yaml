@@ -1,0 +1,254 @@
+# CORE conference rankings (approximate, from public CORE lists).
+# Used for offline venue lookup and filtering — no CORE API required.
+# Edit config/core_venues.yaml locally; bundled copy ships with pip installs.
+
+venues:
+  - id: neurips
+    names: ["NeurIPS", "NIPS", "Neural Information Processing Systems"]
+    core: "A*"
+    field: "Machine Learning"
+
+  - id: icml
+    names: ["ICML", "International Conference on Machine Learning"]
+    core: "A*"
+    field: "Machine Learning"
+
+  - id: iclr
+    names: ["ICLR", "International Conference on Learning Representations"]
+    core: "A*"
+    field: "Machine Learning"
+
+  - id: cvpr
+    names: ["CVPR", "IEEE/CVF Conference on Computer Vision and Pattern Recognition"]
+    core: "A*"
+    field: "Computer Vision"
+
+  - id: iccv
+    names: ["ICCV", "International Conference on Computer Vision"]
+    core: "A*"
+    field: "Computer Vision"
+
+  - id: eccv
+    names: ["ECCV", "European Conference on Computer Vision"]
+    core: "A"
+    field: "Computer Vision"
+
+  - id: acl
+    names: ["ACL", "Association for Computational Linguistics", "Annual Meeting of the ACL"]
+    core: "A*"
+    field: "NLP"
+
+  - id: emnlp
+    names: ["EMNLP", "Empirical Methods in Natural Language Processing"]
+    core: "A*"
+    field: "NLP"
+
+  - id: naacl
+    names: ["NAACL", "North American Chapter of the ACL"]
+    core: "A"
+    field: "NLP"
+
+  - id: coling
+    names: ["COLING", "International Conference on Computational Linguistics"]
+    core: "A"
+    field: "NLP"
+
+  - id: aaai
+    names: ["AAAI", "AAAI Conference on Artificial Intelligence"]
+    core: "A*"
+    field: "AI"
+
+  - id: ijcai
+    names: ["IJCAI", "International Joint Conference on Artificial Intelligence"]
+    core: "A*"
+    field: "AI"
+
+  - id: sigmod
+    names: ["SIGMOD", "ACM SIGMOD Conference"]
+    core: "A*"
+    field: "Databases"
+
+  - id: vldb
+    names: ["VLDB", "Very Large Data Bases"]
+    core: "A*"
+    field: "Databases"
+
+  - id: icde
+    names: ["ICDE", "IEEE International Conference on Data Engineering"]
+    core: "A"
+    field: "Databases"
+
+  - id: sigkdd
+    names: ["KDD", "SIGKDD", "ACM SIGKDD Conference on Knowledge Discovery and Data Mining"]
+    core: "A*"
+    field: "Data Mining"
+
+  - id: www
+    names: ["WWW", "The Web Conference", "International World Wide Web Conference"]
+    core: "A*"
+    field: "Web"
+
+  - id: sigir
+    names: ["SIGIR", "ACM SIGIR Conference"]
+    core: "A*"
+    field: "Information Retrieval"
+
+  - id: cikm
+    names: ["CIKM", "ACM Conference on Information and Knowledge Management"]
+    core: "A"
+    field: "Information Retrieval"
+
+  - id: icse
+    names: ["ICSE", "International Conference on Software Engineering"]
+    core: "A*"
+    field: "Software Engineering"
+
+  - id: fse
+    names: ["FSE", "ESEC/FSE", "Foundations of Software Engineering"]
+    core: "A*"
+    field: "Software Engineering"
+
+  - id: oopsla
+    names: ["OOPSLA", "Object-Oriented Programming Systems, Languages, and Applications"]
+    core: "A"
+    field: "Programming Languages"
+
+  - id: pldi
+    names: ["PLDI", "Programming Language Design and Implementation"]
+    core: "A*"
+    field: "Programming Languages"
+
+  - id: popl
+    names: ["POPL", "Symposium on Principles of Programming Languages"]
+    core: "A*"
+    field: "Programming Languages"
+
+  - id: sigcomm
+    names: ["SIGCOMM", "ACM SIGCOMM Conference"]
+    core: "A*"
+    field: "Networking"
+
+  - id: nsdi
+    names: ["NSDI", "USENIX Symposium on Networked Systems Design and Implementation"]
+    core: "A*"
+    field: "Networking"
+
+  - id: sosp
+    names: ["SOSP", "Symposium on Operating Systems Principles"]
+    core: "A*"
+    field: "Systems"
+
+  - id: osdi
+    names: ["OSDI", "Operating Systems Design and Implementation"]
+    core: "A*"
+    field: "Systems"
+
+  - id: asplos
+    names: ["ASPLOS", "Architectural Support for Programming Languages and Operating Systems"]
+    core: "A*"
+    field: "Systems"
+
+  - id: eurosys
+    names: ["EuroSys", "European Conference on Computer Systems"]
+    core: "A"
+    field: "Systems"
+
+  - id: usenix_security
+    names: ["USENIX Security", "USENIX Security Symposium"]
+    core: "A*"
+    field: "Security"
+
+  - id: ccs
+    names: ["CCS", "ACM Conference on Computer and Communications Security"]
+    core: "A*"
+    field: "Security"
+
+  - id: ndss
+    names: ["NDSS", "Network and Distributed System Security Symposium"]
+    core: "A*"
+    field: "Security"
+
+  - id: sp
+    names: ["IEEE S&P", "IEEE Symposium on Security and Privacy", "Oakland"]
+    core: "A*"
+    field: "Security"
+
+  - id: stoc
+    names: ["STOC", "Symposium on Theory of Computing"]
+    core: "A*"
+    field: "Theory"
+
+  - id: focs
+    names: ["FOCS", "IEEE Symposium on Foundations of Computer Science"]
+    core: "A*"
+    field: "Theory"
+
+  - id: soda
+    names: ["SODA", "ACM-SIAM Symposium on Discrete Algorithms"]
+    core: "A*"
+    field: "Algorithms"
+
+  - id: chi
+    names: ["CHI", "ACM Conference on Human Factors in Computing Systems"]
+    core: "A*"
+    field: "HCI"
+
+  - id: uist
+    names: ["UIST", "ACM Symposium on User Interface Software and Technology"]
+    core: "A*"
+    field: "HCI"
+
+  - id: mobicom
+    names: ["MobiCom", "ACM International Conference on Mobile Computing and Networking"]
+    core: "A*"
+    field: "Mobile"
+
+  - id: siggraph
+    names: ["SIGGRAPH", "ACM SIGGRAPH"]
+    core: "A*"
+    field: "Graphics"
+
+  - id: isca
+    names: ["ISCA", "International Symposium on Computer Architecture"]
+    core: "A*"
+    field: "Architecture"
+
+  - id: micro
+    names: ["MICRO", "IEEE/ACM International Symposium on Microarchitecture"]
+    core: "A*"
+    field: "Architecture"
+
+  - id: hpca
+    names: ["HPCA", "IEEE International Symposium on High-Performance Computer Architecture"]
+    core: "A*"
+    field: "Architecture"
+
+  - id: recomb
+    names: ["RECOMB", "Research in Computational Molecular Biology"]
+    core: "A*"
+    field: "Computational Biology"
+
+  - id: ismb
+    names: ["ISMB", "Intelligent Systems for Molecular Biology"]
+    core: "A*"
+    field: "Computational Biology"
+
+  - id: nature
+    names: ["Nature"]
+    core: "A*"
+    field: "Multidisciplinary"
+
+  - id: science
+    names: ["Science"]
+    core: "A*"
+    field: "Multidisciplinary"
+
+  - id: cell
+    names: ["Cell"]
+    core: "A*"
+    field: "Life Sciences"
+
+  - id: plos_one
+    names: ["PLOS ONE", "PLoS ONE"]
+    core: "C"
+    field: "Multidisciplinary"

@@ -24,6 +24,9 @@ class Paper:
     published: Optional[datetime] = None
     categories: List[str] = field(default_factory=list)
     citations: int = 0
+    venue: str = ""
+    year: Optional[int] = None
+    core_rank: str = ""
     # Filled in later by the summarizer. Falls back to a trimmed abstract.
     summary: str = ""
     # Relevance score assigned during ranking.
@@ -35,6 +38,18 @@ class Paper:
         shown = self.authors[:limit]
         suffix = " et al." if len(self.authors) > limit else ""
         return ", ".join(shown) + suffix
+
+    def venue_line(self) -> str:
+        """Conference/journal, year, and CORE rank for display."""
+        parts: List[str] = []
+        if self.venue:
+            parts.append(self.venue)
+        if self.year and str(self.year) not in self.venue:
+            parts.append(str(self.year))
+        line = ", ".join(parts)
+        if self.core_rank:
+            line = f"{line} · CORE {self.core_rank}" if line else f"CORE {self.core_rank}"
+        return line
 
 
 @dataclass

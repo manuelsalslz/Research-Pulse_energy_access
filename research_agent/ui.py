@@ -50,6 +50,8 @@ SOURCE_DISPLAY: Dict[str, str] = {
 CLI_COMMANDS: List[Tuple[str, str, str]] = [
     ("research-pulse", "Today's digest", "Fetch + open browser preview"),
     ('search "query"', "Search papers", "arXiv, OpenAlex, Crossref, Europe PMC"),
+    ('search --venue neurips', "Filter by conference", "Also --core A, --year 2024"),
+    ("conferences", "CORE venue list", "Ranked conferences & journals"),
     ('follow "field"', "Follow any topic", "Plain English, no config"),
     ("topics", "Manage topics", "View or pick from 31+ domains"),
     ("config papers N", "Digest size", "Set papers per topic (1–25, default 5)"),

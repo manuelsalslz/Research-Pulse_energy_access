@@ -81,9 +81,37 @@ def cmd_today(open_browser: bool = True) -> int:
     return rc
 
 
-def cmd_search(query: str) -> int:
+def _parse_search_args(rest: List[str]) -> tuple:
+    """Parse search query and optional --venue, --core, --year flags."""
+    venues: List[str] = []
+    core_min: Optional[str] = None
+    year: Optional[int] = None
+    query_parts: List[str] = []
+    i = 0
+    while i < len(rest):
+        arg = rest[i]
+        if arg == "--venue" and i + 1 < len(rest):
+            venues = [v.strip() for v in rest[i + 1].split(",") if v.strip()]
+            i += 2
+        elif arg == "--core" and i + 1 < len(rest):
+            core_min = rest[i + 1].strip()
+            i += 2
+        elif arg == "--year" and i + 1 < len(rest):
+            try:
+                year = int(rest[i + 1])
+            except ValueError:
+                ui.warn(f"Invalid year: {rest[i + 1]}")
+            i += 2
+        else:
+            query_parts.append(arg)
+            i += 1
+    return " ".join(query_parts), venues, core_min, year
+
+
+def cmd_search(query: str, venues: Optional[List[str]] = None,
+               core_min: Optional[str] = None, year: Optional[int] = None) -> int:
     if not query.strip():
-        ui.warn('Usage: research-pulse search "your query"')
+        ui.warn('Usage: research-pulse search "your query" [--venue neurips,icml] [--core A] [--year 2024]')
         ui.command_palette()
         return 1
 
@@ -92,8 +120,20 @@ def cmd_search(query: str) -> int:
     from .search import search_papers
 
     sources = ["arxiv", "openalex", "semanticscholar", "crossref"]
-    with ui.quiet_logs(), ui.search_progress(sources, query) as on_source:
-        papers = search_papers(query, limit=10, on_source=on_source)
+    filters = []
+    if venues:
+        filters.append(f"venue={','.join(venues)}")
+    if core_min:
+        filters.append(f"CORE>={core_min}")
+    if year:
+        filters.append(f"year={year}")
+    subtitle = query if not filters else f"{query} ({', '.join(filters)})"
+
+    with ui.quiet_logs(), ui.search_progress(sources, subtitle) as on_source:
+        papers = search_papers(
+            query, limit=10, on_source=on_source,
+            venues=venues or None, core_min=core_min, year=year,
+        )
 
     if papers:
         display_papers(papers, f"Search · {query}")
@@ -101,6 +141,35 @@ def cmd_search(query: str) -> int:
     else:
         ui.warn("No papers found — try different keywords or check your connection.")
     return 0 if papers else 1
+
+
+def cmd_conferences(rest: List[str]) -> int:
+    """List CORE-ranked conferences from the bundled catalog."""
+    from .venues import list_venues
+
+    core_min = None
+    if rest and rest[0] == "--core" and len(rest) > 1:
+        core_min = rest[1]
+
+    entries = list_venues(core_min)
+    if not entries:
+        ui.warn("No venues found. Add config/core_venues.yaml to customize.")
+        return 1
+
+    ui.banner("CORE-ranked conferences & journals")
+    if core_min:
+        ui.info(f"Showing venues with CORE rank >= {core_min}")
+
+    for entry in sorted(entries, key=lambda e: (e.get("core", ""), e.get("id", ""))):
+        names = entry.get("names", [])
+        label = names[0] if names else entry.get("id", "")
+        field = entry.get("field", "")
+        core = entry.get("core", "?")
+        extra = f" · {field}" if field else ""
+        ui.info(f"[CORE {core}] {label} ({entry.get('id', '')}){extra}")
+
+    ui.success(f"{len(entries)} venues — filter search with --venue id or name")
+    return 0
 
 
 def cmd_topics(args: List[str]) -> int:
@@ -331,7 +400,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         return cmd_today()
 
     if cmd == "search":
-        return cmd_search(" ".join(rest))
+        query, venues, core_min, year = _parse_search_args(rest)
+        return cmd_search(query, venues=venues or None, core_min=core_min, year=year)
+
+    if cmd == "conferences":
+        return cmd_conferences(rest)
 
     if cmd == "topics":
         return cmd_topics(rest)

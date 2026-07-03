@@ -21,6 +21,7 @@ from .bm25 import rank_papers_combined
 from .config import load_settings, load_secrets
 from .models import Paper
 from .sources import arxiv, openalex, biorxiv, crossref, semanticscholar, europepmc
+from .venues import enrich_papers, filter_papers
 
 
 def _keyword_score(paper: Paper, query: str) -> float:
@@ -103,26 +104,13 @@ def search_arxiv(query: str, days: int = 30, limit: int = 20) -> List[Paper]:
     feed = feedparser.parse(resp.content)
     papers = []
     for entry in feed.entries:
-        from datetime import datetime, timezone
-        published = None
-        if getattr(entry, "published_parsed", None):
-            published = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
-
-        papers.append(Paper(
-            id=entry.get("id", entry.get("link", "")),
-            title=" ".join(entry.get("title", "").split()),
-            abstract=" ".join(entry.get("summary", "").split()),
-            authors=[a.get("name", "") for a in entry.get("authors", [])],
-            url=entry.get("link", ""),
-            source="arXiv",
-            published=published,
-            categories=[t.get("term", "") for t in entry.get("tags", [])],
-        ))
+        papers.append(arxiv._paper_from_entry(entry))
 
     return papers[:limit]
 
 
-def search_openalex(query: str, days: int = 30, limit: int = 20) -> List[Paper]:
+def search_openalex(query: str, days: int = 30, limit: int = 20,
+                    venue: Optional[str] = None) -> List[Paper]:
     """Search OpenAlex by keyword."""
     if not query:
         return []
@@ -133,12 +121,14 @@ def search_openalex(query: str, days: int = 30, limit: int = 20) -> List[Paper]:
         lookback_days=days,
         max_results=min(limit * 2, 50),
         mailto=secrets.sender_email,
+        venue=venue,
     )
 
     return results[:limit]
 
 
-def search_crossref(query: str, days: int = 30, limit: int = 20) -> List[Paper]:
+def search_crossref(query: str, days: int = 30, limit: int = 20,
+                    venue: Optional[str] = None) -> List[Paper]:
     """Search Crossref by keyword."""
     if not query:
         return []
@@ -149,6 +139,7 @@ def search_crossref(query: str, days: int = 30, limit: int = 20) -> List[Paper]:
         lookback_days=days,
         max_results=min(limit * 2, 50),
         mailto=secrets.sender_email,
+        venue=venue,
     )
 
     return results[:limit]
@@ -186,6 +177,9 @@ def search_papers(query: str, sources: Optional[List[str]] = None,
                   days: int = 30, limit: int = 10,
                   min_citations: int = 0,
                   use_bm25: bool = True,
+                  venues: Optional[List[str]] = None,
+                  core_min: Optional[str] = None,
+                  year: Optional[int] = None,
                   on_source: Optional[Callable[[str, str, int], None]] = None
                   ) -> List[Paper]:
     """Search across multiple sources by keyword.
@@ -200,6 +194,9 @@ def search_papers(query: str, sources: Optional[List[str]] = None,
         limit: Maximum results to return (default 10)
         min_citations: Minimum citation count filter (default 0)
         use_bm25: Whether to use BM25 ranking (default True)
+        venues: Optional list of conference/journal names or catalog ids
+        core_min: Minimum CORE rank (A*, A, B, C)
+        year: Publication year filter
 
     Returns:
         List of Paper objects sorted by relevance to query.
@@ -212,11 +209,13 @@ def search_papers(query: str, sources: Optional[List[str]] = None,
         # it here just means it lights up automatically when a key exists.
         sources = ["arxiv", "openalex", "semanticscholar", "crossref"]
 
+    api_venue = venues[0] if venues and len(venues) == 1 else None
+
     fetchers = {
         "arxiv": lambda: search_arxiv(query, days, limit),
-        "openalex": lambda: search_openalex(query, days, limit),
+        "openalex": lambda: search_openalex(query, days, limit, venue=api_venue),
         "semanticscholar": lambda: search_semanticscholar(query, days, limit),
-        "crossref": lambda: search_crossref(query, days, limit),
+        "crossref": lambda: search_crossref(query, days, limit, venue=api_venue),
         "europepmc": lambda: search_europepmc(query, days, limit),
     }
     selected_names = [s for s in sources if s in fetchers]
@@ -242,6 +241,11 @@ def search_papers(query: str, sources: Optional[List[str]] = None,
 
     # Deduplicate
     unique = _dedup(all_papers)
+    enrich_papers(unique)
+
+    # Venue / CORE / year filters (post-fetch; works across all sources)
+    if venues or core_min or year is not None:
+        unique = filter_papers(unique, venues=venues, core_min=core_min, year=year)
 
     # Apply citation filter
     if min_citations > 0:

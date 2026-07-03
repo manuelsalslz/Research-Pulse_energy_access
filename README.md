@@ -19,6 +19,9 @@ pipx install research-pulse
 ```bash
 research-pulse                          # Today's papers
 research-pulse search "query"           # Search papers
+research-pulse search "attention" --venue neurips,icml --core A --year 2024
+research-pulse conferences              # List CORE-ranked venues
+research-pulse conferences --core "A*"  # Top-tier only
 research-pulse topics                   # View/change topics
 research-pulse topics ai-ml nlp cv      # Set topics directly
 research-pulse add-topic --id my-field --label "My Field" --keywords "kw1,kw2"
@@ -34,6 +37,20 @@ research-pulse help                     # All commands
 - Tracks your reading history and ratings
 - 31 built-in research domains (AI, NLP, medicine, physics, etc.)
 - Follow any field: `research-pulse follow "quantum computing"`
+- **Conference metadata**: venue name, year, and CORE rank (A*, A, B, C) on each paper
+- **Filter by conference**: `--venue neurips`, `--core A`, `--year 2024` on search
+
+## Conference filtering
+
+Each paper shows **venue**, **year**, and **CORE rank** when available (from OpenAlex, Crossref, or arXiv comments).
+
+```bash
+research-pulse conferences                    # all ranked venues in catalog
+research-pulse search "diffusion models" --venue neurips,icml
+research-pulse search "LLM reasoning" --core A --year 2024
+```
+
+CORE ranks come from a bundled offline catalog (`config/core_venues.yaml`). Edit or extend it for your field — no CORE API key needed.
 
 ## Zotero Integration
 
