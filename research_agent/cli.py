@@ -24,11 +24,13 @@ from .local_config import (
     effective_papers_per_topic,
     ensure_ready,
     get_papers_per_topic,
+    get_source,
     get_topics,
     save,
     set_papers_per_topic,
     MIN_PAPERS_PER_TOPIC,
     MAX_PAPERS_PER_TOPIC,
+    LOCAL_PATH,
 )
 from . import ui
 
@@ -54,16 +56,33 @@ def _open_preview() -> None:
         ui.warn("No preview generated.")
 
 
+def _resolve_digest_topics() -> List[str]:
+    """Load saved topics; only auto-detect on first run."""
+    topics_list, _ = load_topics()
+    by_id = topics_by_id(topics_list)
+
+    topics = get_topics()
+    if topics:
+        valid = [t for t in topics if t in by_id]
+        if valid:
+            if len(valid) != len(topics):
+                save(valid, source=get_source() or "manual")
+            return valid
+        ui.warn("Saved topics are no longer in the catalog — re-run: research-pulse topics")
+
+    return ensure_ready(verbose=False)
+
+
 def cmd_today(open_browser: bool = True) -> int:
     """Fetch and show today's digest using saved topics."""
     ui.banner()
-    topics = ensure_ready(force_zotero=True, verbose=False)
+    topics = _resolve_digest_topics()
     topics_list, _ = load_topics()
     labels = topics_by_id(topics_list)
     names = [labels[t].label if t in labels else t for t in topics]
 
-    if not ui.HAS_RICH:
-        ui.info(f"Topics: {', '.join(names)}")
+    ui.info(f"Following: {', '.join(names)}")
+    ui.info(f"Config: {LOCAL_PATH}")
 
     from .pipeline import run
 
@@ -178,17 +197,32 @@ def cmd_topics(args: List[str]) -> int:
     by_id = topics_by_id(topics_list)
     current = get_topics() or ensure_ready(verbose=False)
 
+    if args and args[0] in ("show", "list", "current"):
+        ui.banner("Your research topics")
+        ui.info(f"Config file: {LOCAL_PATH}")
+        if current:
+            ui.info(f"Source: {get_source() or 'unknown'}")
+            for tid in current:
+                ui.info(f"  • {by_id[tid].label} ({tid})" if tid in by_id else f"  • {tid}")
+        else:
+            ui.warn("No topics saved yet — run: research-pulse topics")
+        return 0
+
     if args:
         unknown = [a for a in args if a not in by_id]
         if unknown:
             ui.error(f"Unknown topic(s): {', '.join(unknown)}")
             ui.info("Run: research-pulse topics")
+            ui.info("Use topic IDs (e.g. ai-ml nlp cv), not display names.")
             return 1
-        save(args, source="manual")
-        names = [by_id[t].label for t in args]
+        if not save(args, source="manual"):
+            ui.error("No valid topics to save.")
+            return 1
+        names = [by_id[t].label for t in args if t in by_id]
         ui.success(f"Saved {len(names)} topic(s)")
         for n in names:
             ui.info(n)
+        ui.info(f"Config: {LOCAL_PATH}")
         return 0
 
     ui.banner("Manage your research topics")
@@ -215,11 +249,40 @@ def cmd_topics(args: List[str]) -> int:
         ui.warn("No topics selected.")
         return 1
 
-    save(chosen, source="manual")
+    if not save(chosen, source="manual"):
+        ui.error("Could not save topics.")
+        return 1
     ui.success(f"Following {len(chosen)} topic(s)")
     for tid in chosen:
         ui.info(by_id[tid].label)
+    ui.info(f"Config: {LOCAL_PATH}")
     return 0
+
+
+def cmd_zotero(rest: List[str]) -> int:
+    """Detect Zotero library topics; optionally apply them to the digest."""
+    apply = "--apply" in rest or "-a" in rest
+    if apply:
+        from .zotero import detect_topics, find_zotero_db
+
+        if not find_zotero_db():
+            ui.warn("Zotero database not found.")
+            ui.info("Install Zotero or set ZOTERO_DATA_DIR to your data folder.")
+            return 1
+        matches = detect_topics()
+        chosen = [t[0] for t in matches if t[2] >= 0.15][:5]
+        if not chosen:
+            ui.warn("Could not match your library to known topics.")
+            return 1
+        save(chosen, source="zotero")
+        labels = topics_by_id(load_topics()[0])
+        ui.success(f"Applied {len(chosen)} topic(s) from Zotero")
+        for tid in chosen:
+            ui.info(labels[tid].label if tid in labels else tid)
+        return 0
+
+    from .zotero import detect_and_print
+    return detect_and_print()
 
 
 def cmd_help() -> int:
@@ -302,6 +365,14 @@ def cmd_config(args: List[str]) -> int:
 
     if not args or args[0] == "show":
         ui.banner("Local settings")
+        ui.info(f"Config file: {LOCAL_PATH}")
+        saved = get_topics()
+        if saved:
+            labels = topics_by_id(load_topics()[0])
+            names = [labels[t].label if t in labels else t for t in saved]
+            ui.info(f"Topics ({get_source() or 'unknown'}): {', '.join(names)}")
+        else:
+            ui.info("Topics: not set yet (run research-pulse topics)")
         ui.info(f"Papers per topic: [bold]{current}[/]" if ui.HAS_RICH else f"Papers per topic: {current}")
         if override is not None:
             ui.info(f"  (your override; default in settings.yaml is {default})")
@@ -408,6 +479,9 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     if cmd == "topics":
         return cmd_topics(rest)
+
+    if cmd == "zotero":
+        return cmd_zotero(rest)
 
     if cmd in ("follow", "add"):
         return cmd_follow(rest)

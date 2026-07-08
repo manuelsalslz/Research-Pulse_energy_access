@@ -54,11 +54,44 @@ CORE ranks come from a bundled offline catalog (`config/core_venues.yaml`). Edit
 
 ## Zotero Integration
 
-If you have [Zotero](https://www.zotero.org/) installed, topics are auto-detected from your library on first run.
+If you have [Zotero](https://www.zotero.org/) installed, topics are auto-detected from your library on **first run only**. Manual topic choices are kept after that.
 
 ```bash
-research-pulse zotero    # See detected topics
+research-pulse zotero              # See detected topics
+research-pulse zotero --apply      # Re-sync digest topics from Zotero
 ```
+
+## Topics
+
+Set topics with **IDs** (the short names in parentheses), not display labels:
+
+```bash
+research-pulse topics              # Interactive picker
+research-pulse topics ai-ml nlp cv # Set directly
+research-pulse topics show         # See current topics + config file path
+```
+
+Run `research-pulse topics` with no args to see the full list and current selection.
+
+### One config file — avoid mixing installs
+
+Topic choices are stored in `data/local.json`. **Where that file lives depends on how you run ResearchPulse:**
+
+| How you run it | Config location |
+|----------------|-----------------|
+| `research-pulse` (pip/pipx) | `%USERPROFILE%\.research-pulse\data\local.json` (Windows) or `~/.research-pulse/data/local.json` |
+| `python -m research_agent` from a git clone | `<repo>/data/local.json` |
+
+If you set topics one way but run the digest another, you'll see the wrong topics (often defaults `ai-ml`, `nlp`).
+
+**Fix:** use the same entry point for both, or reinstall from your clone:
+
+```bash
+pip install -e "D:\Research Agent"   # editable install — one path for everything
+research-pulse topics show           # confirm config file path
+```
+
+Set `RESEARCHPULSE_HOME` to force a single config directory anywhere.
 
 ## Interactive Agent
 

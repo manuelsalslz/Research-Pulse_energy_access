@@ -32,16 +32,19 @@ def _write_local(data: dict) -> None:
     LOCAL_PATH.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 
-def save(topics: List[str], source: str = "manual") -> None:
-    """Persist the user's topic choices."""
+def save(topics: List[str], source: str = "manual") -> bool:
+    """Persist the user's topic choices. Returns False if every id was invalid."""
     valid = set(topics_by_id(load_topics()[0]).keys())
     cleaned = [t for t in topics if t in valid]
+    if topics and not cleaned:
+        return False
     if not cleaned:
         cleaned = list(DEFAULT_TOPICS)
     data = _load_raw()
     data["topics"] = cleaned
     data["source"] = source
     _write_local(data)
+    return True
 
 
 def get_topics() -> List[str]:
@@ -94,11 +97,20 @@ def effective_papers_per_topic() -> int:
 def ensure_ready(verbose: bool = True, force_zotero: bool = False) -> List[str]:
     """Return topic list; auto-configure silently on first run.
 
-    If force_zotero is True, always re-detect from Zotero (if available).
+    If force_zotero is True, re-detect from Zotero and save (when available).
+    Manual topic choices (source=manual or follow) are never overwritten unless
+    force_zotero is explicitly requested.
     """
     existing = get_topics()
+    source = get_source()
 
-    # If force_zotero or first run, try Zotero detection
+    if existing and source in ("manual", "follow") and not force_zotero:
+        return existing
+
+    if existing and not force_zotero:
+        return existing
+
+    # First run or explicit Zotero re-sync
     if force_zotero or not existing:
         source = "default"
         chosen: List[str] = []
