@@ -29,14 +29,14 @@ topics:
   # ── Energy access, justice & clean cooking (custom) ────────────────────
   - id: energy-access
     label: "Energy Access & Electrification"
-    keywords: ["energy access", "rural electrification", "off-grid", "mini-grid", "energy poverty", "household electrification"]
+    keywords: ["energy access", "rural electrification", "electrification", "off-grid", "off grid", "mini-grid", "minigrid", "energy poverty", "grid extension"]
     arxiv: []
     biorxiv: []
     openalex: "energy access rural electrification off-grid"
 
   - id: energy-justice
     label: "Energy Justice"
-    keywords: ["energy justice", "just transition", "energy equity", "distributive justice energy", "energy vulnerability"]
+    keywords: ["energy justice", "just transition", "energy equity", "energy poverty", "energy vulnerability", "distributional justice", "procedural justice", "recognition justice", "climate justice"]
     arxiv: []
     biorxiv: []
     openalex: "energy justice just transition equity"
@@ -51,7 +51,7 @@ topics:
 
   - id: clean-cooking
     label: "Clean Cooking & Affordability"
-    keywords: ["clean cooking", "cooking energy affordability", "clean cooking transition", "adoption barriers", "fuel stacking", "cookstove adoption", "energy planning tools", "geospatial cooking energy"]
+    keywords: ["clean cooking", "cooking fuel", "cookstove", "improved cookstove", "fuel stacking", "barrier", "enabler", "adoption", "affordability", "transition", "household energy", "energy access"]
     arxiv: []
     biorxiv: []
     openalex: "clean cooking affordability adoption barriers"
@@ -59,7 +59,7 @@ topics:
 
   - id: cookstoves
     label: "Cooking Energy & Cost Modeling"
-    keywords: ["clean cooking", "cookstove", "LPG transition", "biogas", "household energy Kenya", "OnStove", "geospatial energy planning"]
+    keywords: ["cookstove", "clean cooking", "LPG", "biogas", "least cost", "cost-benefit", "cost modeling", "fuel choice", "cooking fuel", "LCOE", "tariff","price"]
     arxiv: []
     biorxiv: []
     openalex: "cooking energy & cost modeling"
