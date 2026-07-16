@@ -33,7 +33,7 @@ topics:
     arxiv: []
     biorxiv: []
     openalex: "energy access rural electrification off-grid"
-    semanticscholar: "energy access rural electrification off-grid mini-grid minigrid energy poverty grid extension"
+    semanticscholar: "energy access rural electrification mini-grid off-grid"
 
   - id: energy-justice
     label: "Energy Justice"
@@ -41,7 +41,7 @@ topics:
     arxiv: []
     biorxiv: []
     openalex: "energy justice just transition equity"
-    semanticscholar: "energy justice just transition energy equity energy poverty energy vulnerability distributional justice procedural justice recognition justice climate justice"
+    semanticscholar: "energy justice just transition energy equity vulnerability"
 
   - id: abm-development
     label: "Agent-Based Modelling in Developing Countries"
@@ -49,7 +49,7 @@ topics:
     arxiv: ["cs.MA"]
     biorxiv: []
     openalex: "agent-based modelling developing countries"
-    semanticscholar: "agent-based model agent-based modelling ABM developing countries microsimulation complex systems developing world energy access modelling"
+    semanticscholar: "agent-based modelling developing countries energy access"
 
   - id: clean-cooking
     label: "Clean Cooking & Affordability"
@@ -57,7 +57,7 @@ topics:
     arxiv: []
     biorxiv: []
     openalex: "clean cooking affordability adoption barriers"
-    semanticscholar: "clean cooking cooking fuel cookstove improved cookstove fuel stacking barrier enabler adoption affordability transition household energy energy access"
+    semanticscholar: "clean cooking transition household energy affordability"
 
   - id: cookstoves
     label: "Cooking Energy & Cost Modeling"
@@ -65,7 +65,7 @@ topics:
     arxiv: []
     biorxiv: []
     openalex: "cooking energy & cost modeling"
-    semanticscholar: "cookstove clean cooking LPG biogas least cost cost-benefit cost modeling fuel choice cooking fuel LCOE tariff price"
+    semanticscholar: "cost modeling cooking energy fuel choice"
 
   - id: gis-satellite
     label: "GIS & Satellite Data for Energy Access"
@@ -73,7 +73,7 @@ topics:
     arxiv: ["eess.IV"]
     biorxiv: []
     openalex: "GIS remote sensing geospatial energy population mapping"
-    semanticscholar: "GIS geospatial satellite imagery remote sensing earth observation nighttime lights synthetic population population mapping minigrid detection solar panel detection geospatial energy planning"
+    semanticscholar: "satellite imagery remote sensing energy population mapping"
 
   # ── Computer science & AI ──────────────────────────────────────────────
   # - id: ai-ml
