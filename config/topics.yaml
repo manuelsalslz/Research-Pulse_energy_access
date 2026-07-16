@@ -33,6 +33,7 @@ topics:
     arxiv: []
     biorxiv: []
     openalex: "energy access rural electrification off-grid"
+    semanticscholar: "energy access rural electrification mini-grid off-grid"
 
   - id: energy-justice
     label: "Energy Justice"
@@ -40,6 +41,7 @@ topics:
     arxiv: []
     biorxiv: []
     openalex: "energy justice just transition equity"
+    semanticscholar: "energy justice just transition energy equity vulnerability"
 
   - id: abm-development
     label: "Agent-Based Modelling in Developing Countries"
@@ -63,6 +65,7 @@ topics:
     arxiv: []
     biorxiv: []
     openalex: "cooking energy & cost modeling"
+    semanticscholar: "cookstove clean cooking cost modeling"
 
   - id: gis-satellite
     label: "GIS & Satellite Data for Energy Access"
