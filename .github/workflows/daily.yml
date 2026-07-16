@@ -2,9 +2,10 @@ name: Daily research digest
 
 on:
   schedule:
-    # 11:00 UTC ~ morning across US/EU. arXiv indexes new papers after
-    # ~midnight US Eastern, so this comfortably catches the latest batch.
-    - cron: "0 11 * * *"
+    # 07:00 UTC ~ 9:00 CEST (summer) / 8:00 CET (winter) in Stockholm. arXiv
+    # indexes new papers after ~midnight US Eastern, so this still comfortably
+    # catches the latest batch.
+    - cron: "0 7 * * *"
   # Allow manual runs (and a dry run) from the Actions tab.
   workflow_dispatch:
     inputs:
