@@ -91,6 +91,8 @@
       <div class="feature"><b>100% free & open</b>Runs on GitHub Actions. Fork it and run your own.</div>
     </div>
 
+    <p class="note" id="newsFeeds"></p>
+
     <footer>
       Built with <a href="https://github.com/research-pulse" target="_blank" rel="noopener">ResearchPulse</a> &middot; open-source (MIT)
     </footer>
@@ -103,37 +105,24 @@
 
     // 2) Keep this list in sync with config/topics.yaml (id + label).
     const TOPICS = [
-      { id: "ai-ml",          label: "Artificial Intelligence & Machine Learning" },
-      { id: "nlp",            label: "Natural Language Processing" },
-      { id: "cv",             label: "Computer Vision" },
-      { id: "robotics",       label: "Robotics" },
-      { id: "security",       label: "Security & Cryptography" },
-      { id: "systems",        label: "Systems & Distributed Computing" },
-      { id: "hci",            label: "Human-Computer Interaction" },
-      { id: "theory",         label: "Theoretical Computer Science" },
-      { id: "software-eng",   label: "Software Engineering" },
-      { id: "bioinformatics", label: "Bioinformatics & Computational Biology" },
-      { id: "medicine",       label: "Medicine & Health" },
-      { id: "neuroscience",   label: "Neuroscience" },
-      { id: "genetics",       label: "Genetics & Genomics" },
-      { id: "immunology",     label: "Immunology" },
-      { id: "cancer",         label: "Cancer & Oncology" },
-      { id: "public-health",  label: "Public Health & Epidemiology" },
-      { id: "physics",        label: "Physics" },
-      { id: "astronomy",      label: "Astronomy & Astrophysics" },
-      { id: "chemistry",      label: "Chemistry" },
-      { id: "materials",      label: "Materials Science" },
-      { id: "energy",         label: "Energy & Sustainability" },
-      { id: "climate",        label: "Climate & Earth Science" },
-      { id: "engineering",    label: "Engineering (General)" },
-      { id: "math",           label: "Mathematics" },
-      { id: "statistics",     label: "Statistics" },
-      { id: "economics",      label: "Economics & Finance" },
-      { id: "psychology",     label: "Psychology & Cognitive Science" },
-      { id: "social-science", label: "Social & Political Science" },
-      { id: "education",      label: "Education & Learning Sciences" },
-      { id: "environment",    label: "Environmental & Ecological Science" },
-      { id: "agriculture",    label: "Agriculture & Food Science" },
+      { id: "energy-access",    label: "Energy Access & Electrification" },
+      { id: "energy-justice",   label: "Energy Justice" },
+      { id: "abm-development",  label: "Agent-Based Modelling in Developing Countries" },
+      { id: "clean-cooking",    label: "Clean Cooking & Affordability" },
+      { id: "cookstoves",       label: "Cooking Energy & Cost Modeling" },
+      { id: "gis-satellite",    label: "GIS & Satellite Data for Energy Access" },
+      { id: "energy",           label: "Energy & Sustainability" },
+      { id: "climate",          label: "Climate & Earth Science" },
+    ];
+
+    // 3) Keep this list in sync with the news_feeds: block in config/topics.yaml.
+    // Shared across every subscriber regardless of topic picks (see pipeline.py).
+    const NEWS_FEEDS = [
+      "Hacker News (front page)",
+      "MIT News - Research",
+      "Nature - Latest",
+      "Science Daily - Top",
+      "Phys.org - Latest",
     ];
 
     const topicsEl = document.getElementById("topics");
@@ -143,6 +132,9 @@
       lbl.innerHTML = `<input type="checkbox" value="${t.id}" /> ${t.label}`;
       topicsEl.appendChild(lbl);
     });
+
+    document.getElementById("newsFeeds").textContent =
+      "Every digest also includes research news from: " + NEWS_FEEDS.join(", ") + ".";
 
     const form = document.getElementById("signup");
     const msg = document.getElementById("msg");
