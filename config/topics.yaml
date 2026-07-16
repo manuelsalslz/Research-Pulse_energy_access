@@ -37,7 +37,7 @@ topics:
 
   - id: energy-justice
     label: "Energy Justice"
-    keywords: ["energy justice", "just transition", "energy equity", "energy poverty", "energy vulnerability", "distributional justice", "procedural justice", "recognition justice", "climate justice"]
+    keywords: ["energy justice", "just transition", "energy equity", "energy poverty", "energy vulnerability", "distributional justice", "procedural justice", "recognition justice", "climate justice", "justice", "equity", "fairness", "vulnerable", "inclusive transition"]
     arxiv: []
     biorxiv: []
     openalex: "energy justice just transition equity"
