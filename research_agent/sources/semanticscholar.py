@@ -17,6 +17,8 @@ Docs: https://api.semanticscholar.org/api-docs/graph
 from __future__ import annotations
 
 import os
+import threading
+import time
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
@@ -24,6 +26,22 @@ from ..models import Paper
 from .http import get
 
 API_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
+
+# The free API tier caps requests at 1/second, cumulative across all
+# endpoints. Self-throttle proactively rather than relying solely on the
+# shared http helper's reactive 429 retry/backoff.
+_MIN_INTERVAL = 1.1  # seconds, with a small margin over the 1 req/s cap
+_last_call_lock = threading.Lock()
+_last_call_time = 0.0
+
+
+def _throttle() -> None:
+    global _last_call_time
+    with _last_call_lock:
+        wait = _MIN_INTERVAL - (time.monotonic() - _last_call_time)
+        if wait > 0:
+            time.sleep(wait)
+        _last_call_time = time.monotonic()
 
 FIELDS = ",".join([
     "title",
@@ -105,6 +123,7 @@ def fetch(query: str, lookback_days: int = 0, max_results: int = 25) -> List[Pap
         # Open-ended range: from start date until now.
         params["publicationDateOrYear"] = f"{start:%Y-%m-%d}:"
 
+    _throttle()
     resp = get(API_URL, params=params, headers={"x-api-key": api_key})
     if resp is None:
         return []
