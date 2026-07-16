@@ -22,8 +22,11 @@ import time
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
+from ..log import get as _log
 from ..models import Paper
 from .http import get
+
+log = _log("semanticscholar")
 
 API_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
 
@@ -111,6 +114,7 @@ def fetch(query: str, lookback_days: int = 0, max_results: int = 25) -> List[Pap
     # the network entirely unless the user provides a (free) key.
     api_key = os.environ.get("S2_API_KEY", "").strip()
     if not api_key:
+        log.info("no S2_API_KEY set; skipping (query=%r)", query)
         return []
 
     params = {
@@ -126,11 +130,14 @@ def fetch(query: str, lookback_days: int = 0, max_results: int = 25) -> List[Pap
     _throttle()
     resp = get(API_URL, params=params, headers={"x-api-key": api_key})
     if resp is None:
+        log.warning("request failed after retries (query=%r)", query)
         return []
     try:
         data = resp.json()
     except ValueError:
+        log.warning("non-JSON response (query=%r, status=%s)", query, resp.status_code)
         return []
+    log.info("query=%r -> %d result(s)", query, len(data.get("data", []) or []))
 
     papers: List[Paper] = []
     for item in data.get("data", []) or []:
